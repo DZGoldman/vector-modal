@@ -67,6 +67,7 @@ import {
   getChainInfo,
   getWithdrawAssetDecimals,
 } from '../utils';
+import Login from './Login';
 import Loading from './Loading';
 import Options from './Options';
 import Recover from './Recover';
@@ -141,7 +142,7 @@ const ConnextModal: FC<ConnextModalProps> = ({
   const [listener, setListener] = useState<NodeJS.Timeout>();
 
   const [transferState, setTransferState] = useState<TransferStates>(
-    TRANSFER_STATES.LOADING
+    TRANSFER_STATES.LOGIN
   );
   const [errorState, setErrorState] = useState<ErrorStates>(
     ERROR_STATES.REFRESH
@@ -695,6 +696,15 @@ const ConnextModal: FC<ConnextModalProps> = ({
     setIniting(false);
   };
 
+  const login = async (_email: string) => {
+    let signature = '';
+    try {
+      signature = await connext.loginWithMagic(_email);
+    } catch (e) {}
+
+    return signature;
+  };
+
   useEffect(() => {
     const init = async () => {
       if (!showModal) {
@@ -715,7 +725,8 @@ const ConnextModal: FC<ConnextModalProps> = ({
           depositChainId,
           withdrawChainId,
           depositChainProvider,
-          withdrawChainProvider
+          withdrawChainProvider,
+          signature
         );
       } catch (e) {
         if (e.message.includes('localStorage not available in this window')) {
@@ -806,6 +817,14 @@ const ConnextModal: FC<ConnextModalProps> = ({
       );
     } else {
       switch (step) {
+        // Login Screen
+        case -3:
+          return (
+            <>
+              <Login />
+            </>
+          );
+
         // LOADING SCREEN
         case -2:
           return (

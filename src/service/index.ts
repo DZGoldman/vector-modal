@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import { BrowserNode } from '@connext/vector-browser-node';
 import { iframeSrc } from '../constants';
+import { Magic } from 'magic-sdk';
 
 declare global {
   interface Window {
@@ -11,6 +12,35 @@ declare global {
 class Connext {
   connextClient: BrowserNode | undefined;
 
+  async loginWithMagic(_email: string) {
+    const magic = new Magic('pk_test_727DCDD71EAEB6E1');
+
+    magic.auth.loginWithMagicLink;
+    try {
+      await magic.auth.loginWithMagicLink({ email: _email, showUI: true });
+    } catch (e) {
+      console.error(e);
+      throw new Error(`login with magic: ${e}`);
+    }
+
+    // IMPORTANT! DO NOT CHANGE THIS EVER
+    const AUTHENTICATION_MESSAGE = 'Authenticating Connext SDK';
+
+    let signature: string;
+    try {
+      const accounts = await magic.rpcProvider.send('eth_accounts', []);
+      signature = await magic.rpcProvider.send('personal_sign', [
+        ethers.utils.hexlify(ethers.utils.toUtf8Bytes(AUTHENTICATION_MESSAGE)),
+        accounts[0],
+      ]);
+    } catch (e) {
+      console.error(e);
+      throw new Error(`magic signature: ${e}`);
+    }
+
+    return signature;
+  }
+
   // Create methods
   async connectNode(
     connextNode: BrowserNode | undefined,
@@ -18,7 +48,8 @@ class Connext {
     depositChainId: number,
     withdrawChainId: number,
     depositChainProvider: string,
-    withdrawChainProvider: string
+    withdrawChainProvider: string,
+    signature: string
   ) {
     console.log('Connect Node');
     let browserNode: BrowserNode;

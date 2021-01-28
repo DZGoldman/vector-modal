@@ -5,6 +5,9 @@ import { delay } from '@connext/vector-utils';
 
 export const activePhase = (phase: TransferStates): number => {
   switch (phase) {
+    case 'LOGIN': {
+      return -3;
+    }
     case 'LOADING': {
       return -2;
     }
@@ -86,12 +89,12 @@ export const getChainInfo = async (chainId: number) => {
   }
 };
 
-export const getWithdrawAssetDecimals = async (withdrawChainId: number, withdrawAssetId: string, ethProvider: providers.BaseProvider) => {
-  const token = new Contract(
-    withdrawAssetId,
-    ERC20Abi,
-    ethProvider
-  );
+export const getWithdrawAssetDecimals = async (
+  withdrawChainId: number,
+  withdrawAssetId: string,
+  ethProvider: providers.BaseProvider
+) => {
+  const token = new Contract(withdrawAssetId, ERC20Abi, ethProvider);
 
   if (withdrawAssetId !== constants.AddressZero) {
     try {
