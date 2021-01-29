@@ -84,6 +84,7 @@ export type ConnextModalProps = {
     withdrawChannelAddress: string;
   }) => any;
   transferAmount?: string;
+  web3Signer?: providers.Web3Provider;
 };
 
 const ConnextModal: FC<ConnextModalProps> = ({
@@ -97,6 +98,7 @@ const ConnextModal: FC<ConnextModalProps> = ({
   onClose,
   onReady,
   transferAmount,
+  web3Signer,
 }) => {
   const depositAssetId = utils.getAddress(_depositAssetId);
   const withdrawAssetId = utils.getAddress(_withdrawAssetId);
@@ -153,7 +155,6 @@ const ConnextModal: FC<ConnextModalProps> = ({
 
   const activeStep = activePhase(transferState);
 
-    
   const preventDefault = (event: React.SyntheticEvent) =>
     event.preventDefault();
 
@@ -759,6 +760,11 @@ const ConnextModal: FC<ConnextModalProps> = ({
     // QR code
     else {
       // sets up deposit screen
+      if (web3Signer) {
+        console.log(`Got Web3 Signer`);
+        const signer = web3Signer.getSigner();
+        console.log(signer._address);
+      }
       setTransferState(TRANSFER_STATES.INITIAL);
       console.log(`Starting block listener`);
       await depositListenerAndTransfer(
@@ -919,13 +925,13 @@ const ConnextModal: FC<ConnextModalProps> = ({
                     Send{' '}
                     <Link
                       href={getExplorerLinkForAsset(
-                        depositChainId,
+                        depositChainId!,
                         depositAssetId
                       )}
                       target="_blank"
                       onClick={preventDefault}
                     >
-                      {getAssetName(depositAssetId, depositChainId)}
+                      {getAssetName(depositAssetId, depositChainId!)}
                     </Link>{' '}
                     to the address below
                   </Typography>

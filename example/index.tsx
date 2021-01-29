@@ -7,10 +7,19 @@ import { ConnextModal } from '../';
 
 function App() {
   const [showModal, setShowModal] = React.useState(false);
+  const [ethereum, setEthereum] = React.useState<any>();
 
   return (
     <>
-      <button onClick={() => setShowModal(true)}>Show Modal</button>
+      <button
+        onClick={async () => {
+          const eth = (window as any).ethereum;
+          setEthereum(eth);
+          setShowModal(true);
+        }}
+      >
+        Show Modal
+      </button>
       <ConnextModal
         showModal={showModal}
         onClose={() => setShowModal(false)}
@@ -32,6 +41,7 @@ function App() {
         withdrawAssetId={'0x0000000000000000000000000000000000000000'}
         withdrawChainId={1338}
         withdrawChainProvider="http://localhost:8546"
+        web3Signer={ethereum}
       />
     </>
   );
