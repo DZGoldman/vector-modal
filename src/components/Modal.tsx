@@ -468,9 +468,9 @@ const ConnextModal: FC<ConnextModalProps> = ({
       );
 
       const signer = injectedProvider.getSigner();
-      const depositTx =
+      const xx =
         depositAssetId === constants.AddressZero
-          ? signer.sendTransaction({
+          ? await signer.sendTransaction({
               to: depositAddress,
               value: transferAmountBn,
             })
